@@ -20,3 +20,7 @@ export function isTurningLeft() {
 export function isTurningRight() {
   return keys['ArrowRight'] || keys['KeyD'];
 }
+
+export function isFiring() {
+  return keys['Space'];
+}

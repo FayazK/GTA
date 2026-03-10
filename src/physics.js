@@ -1,6 +1,7 @@
 import {
   ACCELERATION, BRAKE_FORCE, MAX_SPEED, MAX_REVERSE_SPEED,
   FRICTION, TURN_SPEED, TURN_FRICTION, MIN_TURN_SPEED_THRESHOLD,
+  DRIFT_FACTOR, DRIFT_TRANSFER, DRIFT_THRESHOLD,
 } from './config.js';
 import { isAccelerating, isBraking, isTurningLeft, isTurningRight } from './input.js';
 
@@ -11,6 +12,10 @@ export function createPhysicsState() {
     rotation: 0,
     speed: 0,
     angularVelocity: 0,
+    lateralSpeed: 0,
+    drifting: false,
+    prevX: 0,
+    prevY: 0,
   };
 }
 
@@ -37,8 +42,32 @@ export function updatePhysics(state, delta) {
   if (Math.abs(state.speed) < 0.01) state.speed = 0;
   if (Math.abs(state.angularVelocity) < 0.0001) state.angularVelocity = 0;
 
-  // Update rotation and position
+  // Update rotation
   state.rotation += state.angularVelocity * delta;
-  state.x += Math.sin(state.rotation) * state.speed * delta;
-  state.y -= Math.cos(state.rotation) * state.speed * delta;
+
+  // Drift: transfer forward speed to lateral on sharp turns
+  if (Math.abs(state.angularVelocity) > DRIFT_THRESHOLD && Math.abs(state.speed) > 2.0) {
+    state.lateralSpeed += state.angularVelocity * state.speed * DRIFT_TRANSFER;
+    state.drifting = true;
+  } else {
+    state.drifting = false;
+  }
+
+  // Lateral friction
+  state.lateralSpeed *= DRIFT_FACTOR;
+  if (Math.abs(state.lateralSpeed) < 0.01) state.lateralSpeed = 0;
+
+  // Store previous position for collision resolution
+  state.prevX = state.x;
+  state.prevY = state.y;
+
+  // Forward and lateral direction vectors
+  const forwardX = Math.sin(state.rotation);
+  const forwardY = -Math.cos(state.rotation);
+  const lateralX = Math.cos(state.rotation);
+  const lateralY = Math.sin(state.rotation);
+
+  // Update position: forward + lateral components
+  state.x += (forwardX * state.speed + lateralX * state.lateralSpeed) * delta;
+  state.y += (forwardY * state.speed + lateralY * state.lateralSpeed) * delta;
 }

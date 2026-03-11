@@ -24,3 +24,7 @@ export function isTurningRight() {
 export function isFiring() {
   return keys['Space'];
 }
+
+export function isRestarting() {
+  return keys['KeyR'];
+}

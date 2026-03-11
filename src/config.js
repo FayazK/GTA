@@ -41,3 +41,19 @@ export const BULLET_RADIUS = 3;
 export const BULLET_LIFETIME = 180;        // ~3s at 60fps
 export const BULLET_PED_HIT_RADIUS = 8;   // BULLET_RADIUS + PED_RADIUS
 export const FIRE_COOLDOWN = 15;           // ~0.25s at 60fps
+
+// Missions
+export const MISSION_REWARD = 500;
+export const MISSION_MARKER_RADIUS = 20;
+export const MISSION_REACH_RADIUS = 40;
+
+// Police / Wanted
+export const WANTED_PER_KILL = 0.34;
+export const WANTED_MAX = 3;
+export const WANTED_DECAY_DELAY = 600;
+export const WANTED_DECAY_RATE = 0.005;
+export const POLICE_SPEED = 4.5;
+export const POLICE_TURN_SPEED = 0.03;
+export const POLICE_SPAWN_DISTANCE = 800;
+export const POLICE_CAR_HIT_RADIUS = 20;
+export const POLICE_PER_STAR = 2;
